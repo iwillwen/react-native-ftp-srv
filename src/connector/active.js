@@ -1,48 +1,55 @@
-const {Socket} = require('net');
-const tls = require('tls');
-const ip = require('ip');
-const Promise = require('bluebird');
-const Connector = require('./base');
-const {SocketError} = require('../errors');
+const { Socket, TLSSocket } = require("react-native-tcp-socket");
+const Promise = require("bluebird");
+const Connector = require("./base");
+const { SocketError } = require("../errors");
 
 class Active extends Connector {
   constructor(connection) {
     super(connection);
-    this.type = 'active';
+    this.type = "active";
   }
 
-  waitForConnection({timeout = 5000, delay = 250} = {}) {
+  waitForConnection({ timeout = 5000, delay = 250 } = {}) {
     const checkSocket = () => {
       if (this.dataSocket && this.dataSocket.connected) {
         return Promise.resolve(this.dataSocket);
       }
-      return Promise.resolve().delay(delay)
-      .then(() => checkSocket());
+      return Promise.resolve()
+        .delay(delay)
+        .then(() => checkSocket());
     };
 
     return checkSocket().timeout(timeout);
   }
 
   setupConnection(host, port, family = 4) {
-    const closeExistingServer = () => Promise.resolve(
-      this.dataSocket ? this.dataSocket.destroy() : undefined);
+    const closeExistingServer = () =>
+      Promise.resolve(this.dataSocket ? this.dataSocket.destroy() : undefined);
 
-    return closeExistingServer()
-    .then(() => {
-      if (!ip.isEqual(this.connection.commandSocket.remoteAddress, host)) {
-        throw new SocketError('The given address is not yours', 500);
+    return closeExistingServer().then(() => {
+      if (this.connection.commandSocket.remoteAddress !== host) {
+        throw new SocketError("The given address is not yours", 500);
       }
 
       this.dataSocket = new Socket();
-      this.dataSocket.on('error', (err) => this.server && this.server.emit('client-error', {connection: this.connection, context: 'dataSocket', error: err}));
-      this.dataSocket.connect({host, port, family}, () => {
+      this.dataSocket.on(
+        "error",
+        (err) =>
+          this.server &&
+          this.server.emit("client-error", {
+            connection: this.connection,
+            context: "dataSocket",
+            error: err,
+          })
+      );
+      this.dataSocket.connect({ host, port, family }, () => {
         this.dataSocket.pause();
 
         if (this.connection.secure) {
-          const secureContext = tls.createSecureContext(this.server.options.tls);
-          const secureSocket = new tls.TLSSocket(this.dataSocket, {
+          const secureSocket = new TLSSocket(this.dataSocket, {
             isServer: true,
-            secureContext
+
+            ...this.server.options.tls,
           });
           this.dataSocket = secureSocket;
         }

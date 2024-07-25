@@ -1,7 +1,7 @@
 {
-  "name": "ftp-srv",
-  "version": "0.0.0",
-  "description": "Modern, extensible FTP Server",
+  "name": "react-native-ftp-srv",
+  "version": "0.0.15-beta.7",
+  "description": "Modern, extensible FTP Server for React Native",
   "keywords": [
     "ftp",
     "ftp-server",
@@ -9,20 +9,19 @@
     "ftp-svr",
     "ftpd",
     "ftpserver",
-    "server"
+    "server",
+    "react-native"
   ],
   "license": "MIT",
   "files": [
     "src",
-    "bin",
     "ftp-srv.d.ts"
   ],
   "main": "ftp-srv.js",
-  "bin": "./bin/index.js",
   "types": "./ftp-srv.d.ts",
   "repository": {
     "type": "git",
-    "url": "https://github.com/autovance/ftp-srv"
+    "url": "https://github.com/iwillwen/react-native-ftp-srv"
   },
   "scripts": {
     "pre-release": "npm run verify",
@@ -35,6 +34,11 @@
     "branches": [
       "main"
     ]
+  },
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/",
+    "tag": "beta",
+    "access": "public"
   },
   "husky": {
     "hooks": {
@@ -66,10 +70,15 @@
   },
   "dependencies": {
     "bluebird": "^3.5.1",
-    "bunyan": "^1.8.12",
+    "events": "^3.3.0",
     "ip": "^1.1.5",
     "lodash": "^4.17.15",
     "moment": "^2.22.1",
+    "path": "^0.12.7",
+    "react-native-base64": "^0.2.1",
+    "react-native-fs": "^2.20.0",
+    "stream": "^0.0.2",
+    "url": "^0.11.3",
     "uuid": "^3.2.1",
     "yargs": "^15.4.1"
   },

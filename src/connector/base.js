@@ -1,5 +1,5 @@
-const Promise = require('bluebird');
-const errors = require('../errors');
+const Promise = require("bluebird");
+const errors = require("../errors");
 
 class Connector {
   constructor(connection) {
@@ -23,13 +23,16 @@ class Connector {
   }
 
   waitForConnection() {
-    return Promise.reject(new errors.ConnectorError('No connector setup, send PASV or PORT'));
+    return Promise.reject(
+      new errors.ConnectorError("No connector setup, send PASV or PORT")
+    );
   }
 
   closeSocket() {
     if (this.dataSocket) {
       const socket = this.dataSocket;
-      this.dataSocket.end(() => socket && socket.destroy());
+      this.dataSocket.end();
+      socket && socket.destroy();
       this.dataSocket = null;
     }
   }
@@ -40,7 +43,6 @@ class Connector {
       this.dataServer = null;
     }
   }
-
 
   end() {
     this.closeSocket();
